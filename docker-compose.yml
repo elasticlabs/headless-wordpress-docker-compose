@@ -64,17 +64,17 @@ services:
     networks:
       - wordpress
   
-    # Adminer
-    adminer:
-      image: adminer:latest
-      container_name: adminer4${COMPOSE_PROJECT_NAME}
-      restart: unless-stopped
-      links:
-        - mariadb
-      expose:
-        - "8080"
-      networks: 
-        - wordpress
+  # Adminer
+  adminer:
+    image: adminer:latest
+    container_name: adminer4${COMPOSE_PROJECT_NAME}
+    restart: unless-stopped
+    links:
+      - mariadb
+    expose:
+      - "8080"
+    networks: 
+      - wordpress
 
 networks:
   wp-proxy:
