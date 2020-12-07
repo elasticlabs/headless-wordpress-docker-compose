@@ -6,7 +6,7 @@ SHELL         = /bin/bash
 .SHELLFLAGS   = -o pipefail -c
 
 # For cleanup, get Compose project name from .env file
-DC_PROJECT?=$(shell cat .env | sed 's/^*=//')
+DC_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/^*=//')
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
@@ -50,9 +50,11 @@ hard-cleanup
 	docker volume rm $(shell docker volume ls -qf dangling=true)
 	# Docker system cleanup
 	docker system prune -a
-    # Delete all hosted persistent data available in volumes
-	@echo "[INFO] Cleaning up static volumes"
-    docker volume rm -f $(DC_PROJECT)wp-base
+    # Delete all hosted persistent data available in local directorys
+	@echo "[INFO] Remove all stored logs and data in local volumes!"
+	rm -rf app_logs/*
+    rm -rf app_mariadb/*
+    rm -rf app_wordpress/*
 
 .PHONY: wait
 wait: 

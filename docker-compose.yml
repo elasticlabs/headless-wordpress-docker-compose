@@ -13,10 +13,10 @@ services:
       context: ./proxy
     environment:
       - DHPARAM_GENERATION=false
-      - VIRTUAL_HOST=wordpress.elasticlabs.co
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
       - VIRTUAL_PORT=80
-      - LETSENCRYPT_HOST=wordpress.elasticlabs.co
-      - LETSENCRYPT_EMAIL=patrice.mauny@gmail.com
+      - LETSENCRYPT_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
     volumes:
       - ${NGINX_LOGS:-./app_logs/nginx}:/var/log/nginx
       - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html
