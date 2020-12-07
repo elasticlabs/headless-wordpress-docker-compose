@@ -38,7 +38,7 @@ update:
 	docker-compose -f docker-compose.yml up -d --build 	
 
 .PHONY: hard-cleanup
-hard-cleanup
+hard-cleanup:
 	@echo "[INFO] Bringing done the Headless Wordpress Stack"
 	docker-compose -f docker-compose.yml down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
