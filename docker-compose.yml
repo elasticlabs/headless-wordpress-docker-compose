@@ -22,7 +22,7 @@ services:
       - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
-      - wp-proxy
+      - wp-headless
       - wordpress
   
   #
@@ -79,5 +79,5 @@ services:
 networks:
   wp-proxy:
     external:
-      name: wp-proxy
+      name: wp-headless
   wordpress:
