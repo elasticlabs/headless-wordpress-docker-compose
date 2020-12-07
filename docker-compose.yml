@@ -35,7 +35,7 @@ services:
       - mariadb
       - proxy
     expose: 
-      - "80"
+      - "9000"
     environment:
       - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:-wordpress}
       - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX:-wp_}
