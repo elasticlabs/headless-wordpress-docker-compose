@@ -77,7 +77,7 @@ services:
       - wordpress
 
 networks:
-  wp-proxy:
+  wp-headless:
     external:
       name: wp-headless
   wordpress:
