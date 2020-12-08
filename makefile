@@ -6,7 +6,8 @@ SHELL         = /bin/bash
 .SHELLFLAGS   = -o pipefail -c
 
 # For cleanup, get Compose project name from .env file
-DC_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/^*=//')
+APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/^*=//')
+APPS_NETWORK?=$(shell cat .env | grep APPS_NETWORK | sed 's/^*=//')
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
@@ -30,8 +31,14 @@ up:
 
 .PHONY: build
 build:
+    # Network creation if not done yet
+	@echo "[INFO] Create ${APPS_NETWORK} docker network if it doesn't already exists"
+	docker network inspect docker create ${APPS_NETWORK} >/dev/null 2>&1 \
+		|| docker network create --driver bridge my_local_network
+	# Build the stack
+	@echo "[INFO]Building the application"
 	docker-compose -f docker-compose.yml --build
- 
+
 .PHONY: update
 update: 
 	docker-compose -f docker-compose.yml pull 

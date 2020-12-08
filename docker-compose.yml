@@ -22,7 +22,7 @@ services:
       - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
-      - wp-headless
+      - ${APP_NETWORK}
       - wordpress
   
   #
@@ -77,7 +77,7 @@ services:
       - wordpress
 
 networks:
-  wp-headless:
+  ${APP_NETWORK}:
     external:
-      name: wp-headless
+      name: ${APPS_NETWORK}
   wordpress:

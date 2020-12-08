@@ -10,3 +10,4 @@ This project is a docker composition of a headless wordpress stack, providing a 
 - It's CMS functionalities are perfect match for customers and content creators... 
 - ... but gets really heavy, bloated, and rigid for frontend developpers.
 - **Solution** : welcome API based, headless CMS! More explainations here : [Headless CMS explained](https://www.storyblok.com/tp/headless-cms-explained)
+
