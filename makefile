@@ -17,12 +17,11 @@ help:
 	@echo "      https://github.com/elasticlabs/headless-wordpress-docker-compose "
 	@echo " "
 	@echo "Hints for developers:"
-	@echo "  make build         # Makes container & volumes cleanup, and builds TEAMEngine"
+	@echo "  make build         # Makes container & volumes cleanup, and builds the stack"
 	@echo "  make up            # With working proxy, brings up the testing infrastructure"
 	@echo "  make update        # Update the whole stack"
-	@echo "  make cleanup       # Cleanup of images, containers"
-	@echo "  make hard-cleanup  # /!\ Hard cleanup of images, containers, networks, volumes & data""
-	@echo "=============================================================================="
+	@echo "  make hard-cleanup  # Hard cleanup of images, containers, networks, volumes & data"
+	@echo "==================================================================================="
 
 .PHONY: up
 up:

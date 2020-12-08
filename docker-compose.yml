@@ -22,7 +22,7 @@ services:
       - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
-      - ${APP_NETWORK}
+      - https-revproxy
       - wordpress
   
   #
@@ -77,7 +77,7 @@ services:
       - wordpress
 
 networks:
-  ${APP_NETWORK}:
+  https-revproxy:
     external:
       name: ${APPS_NETWORK}
   wordpress:
