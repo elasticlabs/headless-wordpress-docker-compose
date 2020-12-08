@@ -15,7 +15,7 @@ This project is a docker composition of a headless wordpress stack, providing a 
 ----
 
 ## Docker environment preparation 
-This stack is meant to be deployed behind an automated NGINX based HTTPS proxy. The recommanded automated HTTPS proxy for this stack is the [Elasticlabs HTTPS Nginx Proxy](https://github.com/elasticlabs/teamengine-compose). This composition repository assumes you have this environment :
+This stack is meant to be deployed behind an automated NGINX based HTTPS proxy. The recommanded automated HTTPS proxy for this stack is the [Elasticlabs HTTPS Nginx Proxy](https://github.com/elasticlabs/https-nginx-proxy-docker-compose). This composition repository assumes you have this environment :
 * Working HTTPS Nginx proxy using Let'sencrypt certificates
 * A local docker LAN network called `revproxy_apps` for hosting your *bubble apps* (Nginx entrypoint for each *bubble*). 
 
