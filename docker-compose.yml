@@ -29,7 +29,7 @@ services:
   # Application & DB
   wordpress:
     image: wordpress:${WORDPRESS_VERSION:-php7.4-fpm-alpine}
-    container_name: wordpress4${COMPOSE_PROJECT_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_wordpress
     restart: unless-stopped
     depends_on:
       - mariadb
@@ -50,7 +50,7 @@ services:
   # DB
   mariadb:
     image: mariadb:${MARIADB_VERSION:-latest}
-    container_name: mariadb4${COMPOSE_PROJECT_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_mariadb
     restart: unless-stopped
     expose:
       - "3306"
@@ -67,7 +67,7 @@ services:
   # Adminer
   adminer:
     image: adminer:latest
-    container_name: adminer4${COMPOSE_PROJECT_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_adminer
     restart: unless-stopped
     links:
       - mariadb
