@@ -25,12 +25,12 @@ help:
 
 .PHONY: up
 up:
-    git stash && git pull
+	git stash && git pull
 	docker-compose -f docker-compose.yml up -d --build --remove-orphans
 
 .PHONY: build
 build:
-    # Network creation if not done yet
+	# Network creation if not done yet
 	@echo "[INFO] Create ${APPS_NETWORK} docker network if it doesn't already exists"
 	docker network inspect docker create ${APPS_NETWORK} >/dev/null 2>&1 \
 		|| docker network create --driver bridge my_local_network
@@ -48,7 +48,7 @@ hard-cleanup:
 	@echo "[INFO] Bringing done the Headless Wordpress Stack"
 	docker-compose -f docker-compose.yml down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
-    @echo "[INFO] Cleaning up containers & images"
+	@echo "[INFO] Cleaning up containers & images"
 	docker rm $(docker ps -a -q)
 	docker rmi $(docker images -q)
 	# Remove all dangling docker volumes
@@ -56,11 +56,11 @@ hard-cleanup:
 	docker volume rm $(shell docker volume ls -qf dangling=true)
 	# Docker system cleanup
 	docker system prune -a
-    # Delete all hosted persistent data available in local directorys
+	# Delete all hosted persistent data available in local directorys
 	@echo "[INFO] Remove all stored logs and data in local volumes!"
 	rm -rf app_logs/*
-    rm -rf app_mariadb/*
-    rm -rf app_wordpress/*
+	rm -rf app_mariadb/*
+	rm -rf app_wordpress/*
 
 .PHONY: wait
 wait: 
