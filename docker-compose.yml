@@ -5,7 +5,7 @@ services:
   # Proxy - HTTP entrypoint
   proxy:
     image: ${COMPOSE_PROJECT_NAME}_proxy:latest
-    container_name: proxy4${COMPOSE_PROJECT_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_entrypoint
     restart: unless-stopped
     expose:
       - "80"
@@ -69,6 +69,9 @@ services:
     image: adminer:latest
     container_name: ${COMPOSE_PROJECT_NAME}_adminer
     restart: unless-stopped
+    depends_on:
+      - mariadb
+      - proxy
     links:
       - mariadb
     expose:
