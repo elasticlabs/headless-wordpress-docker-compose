@@ -35,7 +35,7 @@ build:
 
 .PHONY: update
 update: 
-	docker-compose -f docker-compose.yml pull 
+	docker-compose -f docker-compose.yml pull mariadb wordpress adminer
 	docker-compose -f docker-compose.yml up -d --build 	
 
 .PHONY: hard-cleanup
