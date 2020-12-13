@@ -44,13 +44,10 @@ hard-cleanup:
 	docker-compose -f docker-compose.yml down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
 	@echo "[INFO] Cleaning up containers & images"
-	docker rm $(docker ps -a -q)
-	docker rmi $(docker images -q)
+	docker system prune -a
 	# Remove all dangling docker volumes
 	@echo "[INFO] Remove all dangling docker volumes"
 	docker volume rm $(shell docker volume ls -qf dangling=true)
-	# Docker system cleanup
-	docker system prune -a
 	# Delete all hosted persistent data available in local directorys
 	@echo "[INFO] Remove all stored logs and data in local volumes!"
 	rm -rf app_logs/*
