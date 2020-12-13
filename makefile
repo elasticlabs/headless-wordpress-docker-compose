@@ -7,7 +7,6 @@ SHELL         = /bin/bash
 
 # For cleanup, get Compose project name from .env file
 APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/^*=//')
-APPS_NETWORK?=$(shell cat .env | grep APPS_NETWORK | sed 's/^*=//')
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
@@ -24,19 +23,15 @@ help:
 	@echo "==================================================================================="
 
 .PHONY: up
-up:
+up: build
 	git stash && git pull
-	docker-compose -f docker-compose.yml up -d --build --remove-orphans
+	docker-compose -f docker-compose.yml up -d --remove-orphans
 
 .PHONY: build
 build:
-	# Network creation if not done yet
-	@echo "[INFO] Create ${APPS_NETWORK} docker network if it doesn't already exists"
-	docker network inspect docker create ${APPS_NETWORK} >/dev/null 2>&1 \
-		|| docker network create --driver bridge my_local_network
 	# Build the stack
 	@echo "[INFO]Building the application"
-	docker-compose -f docker-compose.yml --build
+	docker-compose -f docker-compose.yml build
 
 .PHONY: update
 update: 

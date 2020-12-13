@@ -29,9 +29,8 @@ This stack is meant to be deployed behind an automated NGINX based HTTPS proxy. 
 **Configuration**
 * **Rename `.env-changeme` file into `.env`** to ensure `docker-compose` gets its environement correctly.
 * Modify the following variables in `.env-changeme` file :
-  * `TE_VHOST=` : replace `wordpress.your-domain.ltd` with your choosen subdomain for portainer.
+  * `VIRTUAL_HOST=` : replace `wordpress.your-domain.ltd` with your choosen subdomain for portainer.
   * `LETSENCRYPT_EMAIL=` : replace `email@mail-provider.ltd` with the email address to get notifications on Certificates issues for your domain. 
-
 
 ## Stack deployment and management
 **Deployment**
