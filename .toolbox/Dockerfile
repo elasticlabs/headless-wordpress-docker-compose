@@ -13,7 +13,7 @@ RUN chmod +x /wait
 
 # Add Makefile to scripts dir
 ADD Makefile entrypoint.sh message.sh wordpress-ssl-fix.sh /scripts/
-RUN chmod +x /scripts/entrypoint.sh
+RUN chmod +x /scripts/*.sh
 
 WORKDIR /var/www/html
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
