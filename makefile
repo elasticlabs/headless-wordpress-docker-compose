@@ -40,7 +40,7 @@ up: build
 	docker-compose run --rm healthcheck
 	docker-compose run --rm toolbox configure
 	@cp ./.toolbox/composer.json ./app/wordpress/
-	docker-compose run --rm toolbox deploy-plugins
+	docker-compose run --rm toolbox deploy-headless
 	@make urls
 
 .PHONY: build
@@ -55,7 +55,8 @@ build:
 update: 
 	@bash ./.utils/message.sh info "[INFO] Updating the project..."
 	docker-compose pull mariadb wordpress adminer
-	#make toolbox deploy-plugins
+	@cp ./.toolbox/composer.json ./app/wordpress/
+	docker-compose run --rm toolbox deploy-headless
 	docker-compose up -d --remove-orphans proxy ${WP_STACK}
 	make urls
 
