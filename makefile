@@ -35,6 +35,7 @@ up: build
 	bash ./.utils/message.sh info "[INFO] Starting the project..."
 	docker-compose up -d --remove-orphans
 	make toolbox configure
+	cp ./.toolbox/composer.json ./app/wordpress/
 	make toolbox deploy-plugins
 	make urls
 
@@ -90,9 +91,6 @@ hard-cleanup:
 	# 2nd : clean up all containers & images, without deleting static volumes
 	bash ./.utils/message.sh info "[INFO] Cleaning up containers & images"
 	docker system prune -a
-	# Remove all dangling docker volumes
-	bash ./.utils/message.sh info "[INFO] Remove all dangling docker volumes"
-	docker volume rm $(shell docker volume ls -qf dangling=true)
 	# Delete all hosted persistent data available in local directorys
 	bash ./.utils/message.sh info "[INFO] Remove all stored logs and data in local volumes!"
 	rm -rf app/*
