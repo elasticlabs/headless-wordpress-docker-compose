@@ -15,8 +15,8 @@ configure:
 		--dbprefix=whebfubwef_\
 		--skip-check
 
-	@echo "⚙️ Wordpress DB Creation..."
-	$(WP_CLI) db create
+	#@echo "⚙️ Wordpress DB Creation..."
+	#$(WP_CLI) db create
 
 	@echo "⚙️ Wordpress installation..."
 	$(WP_CLI) core install \

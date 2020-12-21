@@ -9,7 +9,7 @@ SHELL         = /bin/bash
 APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/.*=//')
 APP_BASEURL?=$(shell cat .env | grep VIRTUAL_HOST | sed 's/.*=//')
 SOFTWARE_STACK = proxy wordpress mariadb adminer
-WP_STACK = wordpress mariadb
+WP_STACK = wordpress mariadb healthcheck
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
