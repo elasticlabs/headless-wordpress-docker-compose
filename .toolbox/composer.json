@@ -6,7 +6,6 @@
         }
     ],
     "require": {
-        "wp-cli/wp-cli-bundle": "*",
         "wpackagist-plugin/wp-graphql": "*",
         "wpackagist-plugin/advanced-custom-fields": "*",
         "wpackagist-plugin/akismet": "*"

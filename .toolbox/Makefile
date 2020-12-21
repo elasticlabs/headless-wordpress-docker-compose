@@ -1,7 +1,7 @@
 # 
 # Headless wordpress - toolbox makefile
 # 
-WP_CLI=wp-cli --allow-root
+WP_CLI=wp --allow-root
 
 configure: 
 	@echo "⚙️ Wordpress database settings..."
@@ -12,9 +12,13 @@ configure:
 		--dbuser=${WORDPRESS_DB_USER} \
 		--dbpass=${WORDPRESS_DB_PASSWORD} \
 		--locale=${WORDPRESS_LOCALE} \
+		--dbprefix=whebfubwef_\
 		--skip-check
 
-	@echo "⚙️ Wordpress site specific global settings..."
+	@echo "⚙️ Wordpress DB Creation..."
+	$(WP_CLI) db create
+
+	@echo "⚙️ Wordpress installation..."
 	$(WP_CLI) core install \
 		--url="https://${VIRTUAL_HOST}" \
 		--title="$(WORDPRESS_WEBSITE_TITLE)" \
@@ -23,11 +27,15 @@ configure:
 		--admin_email=${WORDPRESS_ADMIN_EMAIL}
 
 	$(WP_CLI) option update siteurl "https://${VIRTUAL_HOST}"
+	$(WP_CLI) option update home "https://${VIRTUAL_HOST}"
 	$(WP_CLI) rewrite structure $(WORDPRESS_WEBSITE_POST_URL_STRUCTURE)
 
-deploy-plugins:
+deploy-headless:
+	@cd /var/www/html
 	@echo "⚙️ ${VIRTUAL_HOST} site plugins deployment..."
 	composer install --working-dir=/var/www/html --ignore-platform-reqs
-	@echo "[INFO] Manual deployment of ithub hosted plugins."
+	@echo "[INFO] Manual deployment of github hosted plugins."
 	# WP GraphQL for ACF
 	wp plugin install https://github.com/wp-graphql/wp-graphql-acf/archive/master.zip --force
+	@echo "[INFO] List of deployed plugins :"
+	$(WP_CLI) plugin list

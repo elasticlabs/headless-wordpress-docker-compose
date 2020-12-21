@@ -8,6 +8,8 @@ SHELL         = /bin/bash
 # For cleanup, get Compose project name from .env file
 APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/.*=//')
 APP_BASEURL?=$(shell cat .env | grep VIRTUAL_HOST | sed 's/.*=//')
+SOFTWARE_STACK = proxy wordpress mariadb adminer
+WP_STACK = wordpress mariadb
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
@@ -33,11 +35,13 @@ help:
 up: build
 	@echo " "
 	@bash ./.utils/message.sh info "[INFO] Starting the project..."
-	docker-compose up -d --remove-orphans proxy wordpress mariadb adminer
-	#make toolbox configure
-	cp ./.toolbox/composer.json ./app/wordpress/
-	#make toolbox deploy-plugins
-	make urls
+	docker-compose up -d --remove-orphans ${SOFTWARE_STACK}
+	@bash ./.utils/message.sh info "[INFO] Waiting for resources to become ready for configuration..."
+	docker-compose run --rm healthcheck
+	docker-compose run --rm toolbox configure
+	@cp ./.toolbox/composer.json ./app/wordpress/
+	docker-compose run --rm toolbox deploy-plugins
+	@make urls
 
 .PHONY: build
 build:
@@ -45,14 +49,14 @@ build:
 	git stash && git pull
 	# Build the stack
 	@bash ./.utils/message.sh info "[INFO] Building the application"
-	docker-compose build --pull wordpress mariadb adminer
+	docker-compose build --pull ${WP_STACK}
 
 .PHONY: update
 update: 
 	@bash ./.utils/message.sh info "[INFO] Updating the project..."
 	docker-compose pull mariadb wordpress adminer
 	#make toolbox deploy-plugins
-	docker-compose up -d --remove-orphans proxy wordpress mariadb adminer
+	docker-compose up -d --remove-orphans proxy ${WP_STACK}
 	make urls
 
 .PHONY: urls
@@ -61,7 +65,7 @@ urls:
 	@bash ./.utils/message.sh link "Frontend:   https://${APP_BASEURL}/"
 	@bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
 	@bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
-	echo ""
+	@echo ""
 
 .PHONY: mariadb_backup
 mariadb_backup:
@@ -70,10 +74,6 @@ mariadb_backup:
 .PHONY: mariadb_restore
 mariadb_restore:
 	bash ./.utils/mysql-restore.sh
-
-.PHONY: toolbox
-toolbox: 
-	docker-compose run --rm toolbox $(ARGS)
 
 .PHONY: ssh
 ssh:
@@ -86,7 +86,7 @@ stop:
 
 .PHONY: hard-cleanup
 hard-cleanup:
-	@bash ./.utils/message.sh info "[INFO] Bringing done the Headless Wordpress Stack"
+	@bash ./.utils/message.sh info "[INFO] Bringing down the Headless Wordpress Stack"
 	docker-compose down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
 	@bash ./.utils/message.sh info "[INFO] Cleaning up containers & images"

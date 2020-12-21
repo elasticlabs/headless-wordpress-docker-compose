@@ -1,17 +1,21 @@
-FROM php:7.4-cli-alpine
+ 
+FROM wordpress:cli
 
+# Install make tool
+USER root
 RUN apk add --no-cache curl make composer
 
-# Install WP-CLI in the toolbox
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar  \
-    && chmod +x wp-cli.phar  \
-    && mv wp-cli.phar /usr/local/bin/wp-cli \
-    # Install MySQL extension, as WP-CLI needs to access to WordPress database
-    && docker-php-ext-install mysqli
+# Make docker-compose wait for container dependencies be ready
+# Add the wait script to the image
+ENV WAIT_VERSION 2.7.2
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
+RUN chmod +x /wait
 
 # Add Makefile to scripts dir
-ADD Makefile /scripts/Makefile
-ADD composer.json /var/www/html/composer.json
+ADD Makefile entrypoint.sh /scripts/
+RUN chmod +x /scripts/entrypoint.sh
 
 WORKDIR /var/www/html
-ENTRYPOINT [ "make", "-f", "/scripts/Makefile" ]  
+ENTRYPOINT [ "/scripts/entrypoint.sh" ]
+
+CMD ["wp", "shell"]
