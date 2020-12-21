@@ -25,9 +25,10 @@ help:
 	@echo "   make update          # Update the whole stack"
 	@echo " "
 	@echo " Management utils :"
+	@echo "   make toolbox         # Temporary run the WP CLI container for maintenance purpose"
 	@echo "   make ssh <container> # Connects to internal <container> shell"
 	@echo "   make mariadb_backup  # Backups mariaDB wordpress DB in backup/mysql.sql.gz"
-	@echo "   make mariadb_restore # Backups mariaDB wordpress DB in backup/mysql.sql.gz"
+	@echo "   make mariadb_restore # Restores mariaDB wordpress DB from backup/mysql.sql.gz"
 	@echo "   make hard-cleanup    # Hard cleanup of images, containers, networks, volumes & data"
 	@echo "======================================================================================"
 
@@ -67,6 +68,12 @@ urls:
 	@bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
 	@bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
 	@echo ""
+
+.PHONY: toolbox
+toolbox: 
+	@bash ./.utils/message.sh headline "[INFO] Running the WP-CLI container :"
+	@echo " "
+	docker-compose run --rm toolbox /bin/bash
 
 .PHONY: mariadb_backup
 mariadb_backup:
