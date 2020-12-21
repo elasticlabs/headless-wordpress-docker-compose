@@ -32,11 +32,11 @@ help:
 .PHONY: up
 up: build
 	@echo " "
-	bash ./.utils/message.sh info "[INFO] Starting the project..."
-	docker-compose up -d --remove-orphans
-	make toolbox configure
+	@bash ./.utils/message.sh info "[INFO] Starting the project..."
+	docker-compose up -d --remove-orphans proxy wordpress mariadb adminer
+	#make toolbox configure
 	cp ./.toolbox/composer.json ./app/wordpress/
-	make toolbox deploy-plugins
+	#make toolbox deploy-plugins
 	make urls
 
 .PHONY: build
@@ -44,23 +44,23 @@ build:
 	# Refresh repository
 	git stash && git pull
 	# Build the stack
-	bash ./.utils/message.sh info "[INFO] Building the application"
-	docker-compose build --pull
+	@bash ./.utils/message.sh info "[INFO] Building the application"
+	docker-compose build --pull wordpress mariadb adminer
 
 .PHONY: update
 update: 
-	bash ./.utils/message.sh info "[INFO] Updating the project..."
+	@bash ./.utils/message.sh info "[INFO] Updating the project..."
 	docker-compose pull mariadb wordpress adminer
-	make toolbox deploy-plugins
-	docker-compose up -d --remove-orphans
+	#make toolbox deploy-plugins
+	docker-compose up -d --remove-orphans proxy wordpress mariadb adminer
 	make urls
 
 .PHONY: urls
 urls:
-	bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
-	bash ./.utils/message.sh link "Frontend:   https://${APP_BASEURL}/"
-	bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
-	bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
+	@bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
+	@bash ./.utils/message.sh link "Frontend:   https://${APP_BASEURL}/"
+	@bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
+	@bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
 	echo ""
 
 .PHONY: mariadb_backup
@@ -81,18 +81,18 @@ ssh:
 
 .PHONY: stop
 stop:
-	bash ./.utils/message.sh info "[INFO] Stopping the project..."
+	@bash ./.utils/message.sh info "[INFO] Stopping the project..."
 	docker-compose stop
 
 .PHONY: hard-cleanup
 hard-cleanup:
-	bash ./.utils/message.sh info "[INFO] Bringing done the Headless Wordpress Stack"
+	@bash ./.utils/message.sh info "[INFO] Bringing done the Headless Wordpress Stack"
 	docker-compose down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
-	bash ./.utils/message.sh info "[INFO] Cleaning up containers & images"
+	@bash ./.utils/message.sh info "[INFO] Cleaning up containers & images"
 	docker system prune -a
 	# Delete all hosted persistent data available in local directorys
-	bash ./.utils/message.sh info "[INFO] Remove all stored logs and data in local volumes!"
+	@bash ./.utils/message.sh info "[INFO] Remove all stored logs and data in local volumes!"
 	rm -rf app/*
 
 .PHONY: wait
