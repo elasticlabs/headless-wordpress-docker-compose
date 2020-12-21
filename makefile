@@ -39,7 +39,7 @@ up: build
 	@bash ./.utils/message.sh info "[INFO] Waiting for resources to become ready for configuration..."
 	docker-compose run --rm healthcheck
 	#docker-compose run --rm toolbox configure
-	@cp ./.toolbox/composer.json ./app/wordpress/
+	#@cp ./.toolbox/composer.json ./app/wordpress/
 	#docker-compose run --rm toolbox deploy-headless
 	@make urls
 
