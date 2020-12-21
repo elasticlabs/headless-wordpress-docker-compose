@@ -10,7 +10,7 @@ services:
     expose:
       - "80"
     build:
-      context: ./proxy
+      context: ./.proxy
     environment:
       - DHPARAM_GENERATION=false
       - VIRTUAL_HOST=${VIRTUAL_HOST}
@@ -18,8 +18,8 @@ services:
       - LETSENCRYPT_HOST=${VIRTUAL_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
     volumes:
-      - ${NGINX_LOGS:-./app_logs/nginx}:/var/log/nginx
-      - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html
+      - ${NGINX_LOGS:-./app/logs}:/var/log/nginx
+      - ${WORDPRESS_DATA:-./app/wordpress}:/var/www/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - https-revproxy
@@ -43,7 +43,7 @@ services:
       - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:-root}
       - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:-password}
     volumes:
-      - ${WORDPRESS_DATA:-./app_wordpress}:/var/www/html    
+      - ${WORDPRESS_DATA:-./app/wordpress}:/var/www/html    
     networks:
       - wordpress
   
@@ -60,7 +60,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-wordpress}
     volumes:
-      - ${MARIADB_DATA:-./app_mariadb}
+      - ${MARIADB_DATA:-./app/mariadb}:/var/lib/mysql
     networks:
       - wordpress
   
@@ -77,6 +77,35 @@ services:
     expose:
       - "8080"
     networks: 
+      - wordpress
+
+  # Toolbox WP-CLI & composer container
+  toolbox:
+    image_name: ${COMPOSE_PROJECT_NAME}_toolbox:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_toolbox
+    restart: unless-stopped
+    build:
+      context: ./.toolbox
+    depends_on:
+      - wordpress
+      - mariadb
+      - proxy
+    environment:
+      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:-wordpress}
+      - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX:-wp_}
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST:-mariadb}
+      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:-root}
+      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:-password}
+      # Site specific variables
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - WORDPRESS_LOCALE={WORDPRESS_LOCALE:en_EN}
+      - WORDPRESS_ADMIN_USER=${WORDPRESS_ADMIN_USER:wp-admin}
+      - WORDPRESS_ADMIN_PASSWORD=${WORDPRESS_ADMIN_PASSWORD:changeme}
+      - WORDPRESS_ADMIN_EMAIL=${WORDPRESS_ADMIN_EMAIL:wp-admin@yopmail.com}
+      - WORDPRESS_WEBSITE_POST_URL_STRUCTURE=${WORDPRESS_WEBSITE_POST_URL_STRUCTURE:/%year%/%monthnum%/%day%/%postname%/}
+    volumes_from: 
+      - wordpress
+    networks:
       - wordpress
 
 networks:

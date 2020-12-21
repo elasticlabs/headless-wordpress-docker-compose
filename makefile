@@ -6,54 +6,97 @@ SHELL         = /bin/bash
 .SHELLFLAGS   = -o pipefail -c
 
 # For cleanup, get Compose project name from .env file
-APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/^*=//')
+APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/.*=//')
+APP_BASEURL?=$(shell cat .env | grep VIRTUAL_HOST | sed 's/.*=//')
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
 help:
-	@echo "=============================================================================="
-	@echo "                  Headless Wordpress docker composition "
-	@echo "      https://github.com/elasticlabs/headless-wordpress-docker-compose "
+	@echo "====================================================================================="
+	@echo "                   Headless Wordpress docker composition "
+	@echo "       https://github.com/elasticlabs/headless-wordpress-docker-compose "
 	@echo " "
-	@echo "Hints for developers:"
-	@echo "  make build         # Makes container & volumes cleanup, and builds the stack"
-	@echo "  make up            # With working proxy, brings up the testing infrastructure"
-	@echo "  make update        # Update the whole stack"
-	@echo "  make hard-cleanup  # Hard cleanup of images, containers, networks, volumes & data"
-	@echo "==================================================================================="
+	@echo " "
+	@echo " Basic usage :"
+	@echo "   make build           # Makes container & volumes cleanup, and builds the stack"
+	@echo "   make up  (stop)      # With working proxy, brings up (or stop) the stack"
+	@echo "   make update          # Update the whole stack"
+	@echo " "
+	@echo " Management utils :"
+	@echo "   make ssh <container> # Connects to internal <container> shell"
+	@echo "   make mariadb_backup  # Backups mariaDB wordpress DB in backup/mysql.sql.gz"
+	@echo "   make mariadb_restore # Backups mariaDB wordpress DB in backup/mysql.sql.gz"
+	@echo "   make hard-cleanup    # Hard cleanup of images, containers, networks, volumes & data"
+	@echo "======================================================================================"
 
 .PHONY: up
 up: build
-	git stash && git pull
-	docker-compose -f docker-compose.yml up -d --remove-orphans
+	@echo " "
+	bash ./.utils/message.sh info "[INFO] Starting the project..."
+	docker-compose up -d --remove-orphans
+	make configure
+	make toolbox deploy-plugins
+	make urls
 
 .PHONY: build
 build:
+	# Refresh repository
+	git stash && git pull
 	# Build the stack
-	@echo "[INFO]Building the application"
-	docker-compose -f docker-compose.yml build
+	bash ./.utils/message.sh info "[INFO] Building the application"
+	docker-compose build --pull
 
 .PHONY: update
 update: 
-	docker-compose -f docker-compose.yml pull mariadb wordpress adminer
-	docker-compose -f docker-compose.yml up -d --build 	
+	bash ./.utils/message.sh info "[INFO] Updating the project..."
+	docker-compose pull mariadb wordpress adminer
+	make toolbox deploy-plugins
+	docker-compose up -d --remove-orphans
+	make urls
+
+.PHONY: urls
+urls:
+	bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
+	bash ./.utils/message.sh link "Frontend:   https://${APP_BASEURL}/"
+	bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
+	bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
+	echo ""
+
+.PHONY: mariadb_backup
+mariadb_backup:
+	bash ./.utils/mysql-backup.sh
+
+.PHONY: mariadb_restore
+mariadb_restore:
+	bash ./.utils/mysql-restore.sh
+
+.PHONY: toolbox
+toolbox: 
+	docker-compose run --rm toolbox $(ARGS)
+
+.PHONY: ssh
+ssh:
+	docker exec -it $$(docker-compose ps -q $(ARGS)) /bin/sh
+
+.PHONY: stop
+stop:
+	bash ./.utils/message.sh info "[INFO] Stopping the project..."
+	docker-compose stop
 
 .PHONY: hard-cleanup
 hard-cleanup:
-	@echo "[INFO] Bringing done the Headless Wordpress Stack"
-	docker-compose -f docker-compose.yml down --remove-orphans
+	bash ./.utils/message.sh info "[INFO] Bringing done the Headless Wordpress Stack"
+	docker-compose down --remove-orphans
 	# 2nd : clean up all containers & images, without deleting static volumes
-	@echo "[INFO] Cleaning up containers & images"
+	bash ./.utils/message.sh info "[INFO] Cleaning up containers & images"
 	docker system prune -a
 	# Remove all dangling docker volumes
-	@echo "[INFO] Remove all dangling docker volumes"
+	bash ./.utils/message.sh info "[INFO] Remove all dangling docker volumes"
 	docker volume rm $(shell docker volume ls -qf dangling=true)
 	# Delete all hosted persistent data available in local directorys
-	@echo "[INFO] Remove all stored logs and data in local volumes!"
-	rm -rf app_logs/*
-	rm -rf app_mariadb/*
-	rm -rf app_wordpress/*
+	bash ./.utils/message.sh info "[INFO] Remove all stored logs and data in local volumes!"
+	rm -rf app/*
 
 .PHONY: wait
 wait: 
-	sleep 5
+	sleep 2
