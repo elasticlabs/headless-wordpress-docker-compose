@@ -16,13 +16,7 @@ configure:
 		--skip-check
 
 	@echo " "
-	@bash /scripts/message.sh warning "⚙️ [UNSTABLE] Fix WP CLI messing with SSL management in wp-config-php..."
-	# Keep wp-config.php config
-	sed -i '1,/table_prefix/!d ' wp-config.php
-	# Add end SSL specific configs from wp-config.old.php
-	number=$(shell sed -n  '\|table_prefix|=' wp-config.old.php)
-	lines=$(shell wc -l wp-config.old.php)
-	sed '/table_prefix/,\${lines}!d ' wp-config.old.php | grep -v table_prefix >> wp-config.php
+	@bash /scripts/wordpress-ssl-fix.sh
 	
 	@bash /scripts/message.sh info "⚙️ Wordpress DB Creation..."
 	$(WP_CLI) db create || true

@@ -12,7 +12,7 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERS
 RUN chmod +x /wait
 
 # Add Makefile to scripts dir
-ADD Makefile entrypoint.sh message.sh /scripts/
+ADD Makefile entrypoint.sh message.sh wordpress-ssl-fix.sh /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
 WORKDIR /var/www/html
