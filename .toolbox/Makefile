@@ -1,9 +1,7 @@
 # 
 # Headless wordpress - toolbox makefile
 # 
-
 WP_CLI=wp-cli --allow-root
-WORDPRESS_SHORT_URL?=$(shell echo "${VIRTUAL_HOST}" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
 
 configure: 
 	@echo "⚙️ Wordpress database settings..."
@@ -18,17 +16,17 @@ configure:
 
 	@echo "⚙️ Wordpress site specific global settings..."
 	$(WP_CLI) core install \
-		--url=${WORDPRESS_SHORT_URL} \
+		--url=${VIRTUAL_HOST} \
 		--title="$(WORDPRESS_WEBSITE_TITLE)" \
 		--admin_user=${WORDPRESS_ADMIN_USER} \
 		--admin_password=${WORDPRESS_ADMIN_PASSWORD} \
 		--admin_email=${WORDPRESS_ADMIN_EMAIL}
 
-	$(WP_CLI) option update siteurl "${VIRTUAL_HOST}"
+	$(WP_CLI) option update siteurl "https://${VIRTUAL_HOST}"
 	$(WP_CLI) rewrite structure $(WORDPRESS_WEBSITE_POST_URL_STRUCTURE)
 
 deploy-plugins:
-	@echo "⚙️ ${WORDPRESS_SHORT_URL} site plugins deployment..."
+	@echo "⚙️ ${VIRTUAL_HOST} site plugins deployment..."
 	composer install --working-dir=/var/www/html --ignore-platform-reqs
 	@echo "[INFO] Manual deployment of ithub hosted plugins."
 	# WP GraphQL for ACF

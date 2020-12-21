@@ -13,4 +13,5 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 ADD Makefile /scripts/Makefile
 ADD composer.json /var/www/html/composer.json
 
+WORKDIR /var/www/html
 ENTRYPOINT [ "make", "-f", "/scripts/Makefile" ]  

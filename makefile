@@ -34,7 +34,7 @@ up: build
 	@echo " "
 	bash ./.utils/message.sh info "[INFO] Starting the project..."
 	docker-compose up -d --remove-orphans
-	make configure
+	make toolbox configure
 	make toolbox deploy-plugins
 	make urls
 
