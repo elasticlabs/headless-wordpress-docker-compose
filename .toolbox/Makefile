@@ -18,7 +18,7 @@ configure:
 	@echo " "
 	@bash /scripts/message.sh warning "⚙️ [UNSTABLE] Fix WP CLI messing with SSL management in wp-config-php..."
 	sed -i '1,/table_prefix/!d ' wp-config.php
-	sed '/table_prefix/,$!d ' wp-config.old.php | grep -v table_prefix >> wp-config.php
+	sed '/table_prefix/,\$!d ' wp-config.old.php | grep -v table_prefix >> wp-config.php
 	
 	@bash /scripts/message.sh info "⚙️ Wordpress DB Creation..."
 	$(WP_CLI) db create || true
