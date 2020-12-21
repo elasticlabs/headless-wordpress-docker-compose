@@ -39,6 +39,6 @@ deploy-headless:
 	composer install --working-dir=/var/www/html --ignore-platform-reqs
 	@echo "[INFO] Manual deployment of github hosted plugins."
 	# WP GraphQL for ACF
-	wp plugin install https://github.com/wp-graphql/wp-graphql-acf/archive/master.zip --force
+	$(WP_CLI) plugin install https://github.com/wp-graphql/wp-graphql-acf/archive/master.zip --force
 	@echo "[INFO] List of deployed plugins :"
 	$(WP_CLI) plugin list
