@@ -1,14 +1,16 @@
 {
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://wpackagist.org"
-        }
+    "repositories":[
+       {
+          "type":"composer",
+          "url":"http://wpackagist.org"
+       }
     ],
-    "require": {
-        "wpackagist-plugin/wp-graphql": "*",
-        "wpackagist-plugin/advanced-custom-fields": "*",
-        "wpackagist-plugin/akismet": "*"
-        }
-  }
-  
+    "require":{
+       "wpackagist-plugin/wp-graphql":"*",
+       "wpackagist-plugin/advanced-custom-fields":"*",
+       "wpackagist-plugin/akismet":"*"
+    },
+    "config":{
+       "secure-http":false
+    }
+ } 

@@ -41,7 +41,7 @@ up: build
 	docker-compose run --rm healthcheck
 	docker-compose run --rm toolbox configure
 	@cp ./.toolbox/composer.json ./app/wordpress/
-	#docker-compose run --rm toolbox deploy-headless
+	docker-compose run --rm toolbox deploy-headless
 	@make urls
 
 .PHONY: build
