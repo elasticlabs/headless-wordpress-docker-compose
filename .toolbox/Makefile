@@ -16,7 +16,7 @@ configure:
 
 	@echo "⚙️ Wordpress site specific global settings..."
 	$(WP_CLI) core install \
-		--url=${VIRTUAL_HOST} \
+		--url="https://${VIRTUAL_HOST}" \
 		--title="$(WORDPRESS_WEBSITE_TITLE)" \
 		--admin_user=${WORDPRESS_ADMIN_USER} \
 		--admin_password=${WORDPRESS_ADMIN_PASSWORD} \
