@@ -4,8 +4,8 @@
 WP_CLI=wp --allow-root
 
 configure: 
-	@echo "⚙️ Wordpress database settings..."
-	@rm -f wp-config.php
+	@bash /scripts/message.sh info "⚙️ Wordpress database settings..."
+	@mv wp-config.php wp-config.old.php
 	$(WP_CLI) core config \
 		--dbhost=${WORDPRESS_DB_HOST} \
 		--dbname=${WORDPRESS_DB_NAME} \
@@ -15,10 +15,15 @@ configure:
 		--dbprefix=whebfubwef_\
 		--skip-check
 
-	#@echo "⚙️ Wordpress DB Creation..."
-	#$(WP_CLI) db create
+	@echo " "
+	@bash /scripts/message.sh warning "⚙️ [UNSTABLE] Fix WP CLI messing with SSL management in wp-config-php..."
+	sed -i '1,/table_prefix/!d ' wp-config.php
+	sed '/table_prefix/,$!d ' wp-config.old.php | grep -v table_prefix >> wp-config.php
+	
+	@bash /scripts/message.sh info "⚙️ Wordpress DB Creation..."
+	$(WP_CLI) db create || true
 
-	@echo "⚙️ Wordpress installation..."
+	@bash /scripts/message.sh info "⚙️ Wordpress installation..."
 	$(WP_CLI) core install \
 		--url="https://${VIRTUAL_HOST}" \
 		--title="$(WORDPRESS_WEBSITE_TITLE)" \
@@ -28,7 +33,7 @@ configure:
 
 	$(WP_CLI) option update siteurl "https://${VIRTUAL_HOST}"
 	$(WP_CLI) option update home "https://${VIRTUAL_HOST}"
-	$(WP_CLI) rewrite structure $(WORDPRESS_WEBSITE_POST_URL_STRUCTURE)
+	$(WP_CLI) rewrite structure ${WORDPRESS_WEBSITE_POST_URL_STRUCTURE}
 
 deploy-headless:
 	@cd /var/www/html

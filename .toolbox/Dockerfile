@@ -13,6 +13,7 @@ RUN chmod +x /wait
 
 # Add Makefile to scripts dir
 ADD Makefile entrypoint.sh /scripts/
+ADD ../.utils/* /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
 WORKDIR /var/www/html
