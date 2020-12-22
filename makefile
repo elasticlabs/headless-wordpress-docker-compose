@@ -64,9 +64,10 @@ update:
 .PHONY: urls
 urls:
 	@bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
-	@bash ./.utils/message.sh link "Frontend:   https://${APP_BASEURL}/"
-	@bash ./.utils/message.sh link "Backend:    https://${APP_BASEURL}/wp-admin/"
-	@bash ./.utils/message.sh link "Adminer:    https://${APP_BASEURL}/adminer"
+	@bash ./.utils/message.sh link "Frontend (NextJS inc. Autoreload):   https://${APP_BASEURL}/"
+	@bash ./.utils/message.sh link "Wordpress (front):    https://${APP_BASEURL}/editor/"
+	@bash ./.utils/message.sh link "Wordpress (back):     https://${APP_BASEURL}/editor/wp-admin/"
+	@bash ./.utils/message.sh link "Adminer:  		      https://${APP_BASEURL}/adminer"
 	@echo ""
 
 .PHONY: toolbox
