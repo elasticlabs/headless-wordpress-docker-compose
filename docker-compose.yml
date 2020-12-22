@@ -117,11 +117,11 @@ services:
       - proxy
     command: sh -c "/wait"
     environment:
-      - WAIT_HOSTS=mariadb:3306, wordpress:9000
-      - WAIT_BEFORE_HOSTS=${WAIT_BEFORE_HOSTS:-30}
-      - WAIT_AFTER_HOSTS=${WAIT_AFTER_HOSTS:-15}
-      - WAIT_HOSTS_TIMEOUT=${WAIT_HOSTS_TIMEOUT:-300}
-      - WAIT_SLEEP_INTERVAL=${WAIT_SLEEP_INTERVAL:-30}
+      - WAIT_HOSTS=nodejs:5000
+      - WAIT_BEFORE_HOSTS=${WAIT_BEFORE_HOSTS:-10}
+      - WAIT_AFTER_HOSTS=${WAIT_AFTER_HOSTS:-5}
+      - WAIT_HOSTS_TIMEOUT=${WAIT_HOSTS_TIMEOUT:-60}
+      - WAIT_SLEEP_INTERVAL=${WAIT_SLEEP_INTERVAL:-10}
       - WAIT_HOST_CONNECT_TIMEOUT=${WAIT_HOST_CONNECT_TIMEOUT:-30}
     networks:
       - wordpress
