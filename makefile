@@ -46,7 +46,9 @@ up: build
 .PHONY: build
 build:
 	# Refresh repository
-	git stash && git pull
+	#git stash && git pull
+	# Set server_name in reverse proxy
+	sed -i "s/changeme/${APP_BASEURL}/" .proxy/wp-revproxy.conf
 	# Build the stack
 	@bash ./.utils/message.sh info "[INFO] Building the application"
 	docker-compose build --pull ${WP_STACK}
