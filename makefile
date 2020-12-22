@@ -34,7 +34,6 @@ help:
 
 .PHONY: up
 up: build
-	@echo " "
 	@bash ./.utils/message.sh info "[INFO] Starting the project..."
 	docker-compose up -d --remove-orphans ${SOFTWARE_STACK}
 	@bash ./.utils/message.sh info "[INFO] Waiting for resources to become ready for configuration..."

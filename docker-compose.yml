@@ -117,7 +117,7 @@ services:
       - proxy
     command: sh -c "/wait"
     environment:
-      - WAIT_HOSTS=nodejs:5000
+      - WAIT_HOSTS=mariadb:3306, wordpress:9000
       - WAIT_BEFORE_HOSTS=${WAIT_BEFORE_HOSTS:-10}
       - WAIT_AFTER_HOSTS=${WAIT_AFTER_HOSTS:-5}
       - WAIT_HOSTS_TIMEOUT=${WAIT_HOSTS_TIMEOUT:-60}

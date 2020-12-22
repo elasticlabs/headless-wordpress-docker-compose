@@ -20,7 +20,9 @@ case "$messageType" in
         echo ""
     ;;
     "warning")
+        echo ""
         echo -e "${RED}$(echo $messageText | tr '[:lower:]' '[:upper:]')${NC}"
+        echo ""
     ;;
     "success")
         echo -e "${GREEN}$messageText${NC}"
@@ -29,6 +31,7 @@ case "$messageType" in
         echo -e "${GRAY}$messageText${NC}"
     ;;
     "info")
+        echo ""
         echo -e "${YELLOW}$messageText${NC}"
     ;;
     "link")
