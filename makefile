@@ -35,7 +35,7 @@ help:
 .PHONY: up
 up: build
 	@bash ./.utils/message.sh info "[INFO] Starting the project..."
-	docker-compose up -d --remove-orphans ${SOFTWARE_STACK}
+	docker-compose up -d --remove-orphans ${SOFTWARE_STACK} nextjs
 	@bash ./.utils/message.sh info "[INFO] Waiting for resources to become ready for configuration..."
 	docker-compose run --rm healthcheck
 	docker-compose run --rm toolbox configure
@@ -47,11 +47,14 @@ up: build
 build:
 	# Refresh repository
 	#git stash && git pull
+	# 1/ Wordpress 
 	# Set server_name in reverse proxy
 	sed -i "s/changeme/${APP_BASEURL}/" .proxy/wp-revproxy.conf
 	# Build the stack
 	@bash ./.utils/message.sh info "[INFO] Building the application"
 	docker-compose build --pull ${WP_STACK}
+	# 2/ NextJS
+	docker-compose build --pull nextjs
 
 .PHONY: update
 update: 

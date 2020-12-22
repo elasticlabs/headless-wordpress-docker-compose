@@ -64,6 +64,20 @@ services:
     networks:
       - wordpress
   
+  # Next JS dev instance
+  nextjs:
+    build:
+      context: ./.nextjs
+    container_name: ${COMPOSE_PROJECT_NAME}_nextjs
+    restart: unless-stopped
+    depends_on: wordpress
+    expose: 
+      - "3000"
+    volumes: 
+      - ${NEXTJS_DATA:-./nextjs-material-kit}:/usr/src/app
+    networks: 
+      - wordpress
+
   # Adminer
   adminer:
     image: adminer:latest
