@@ -64,9 +64,9 @@ update:
 urls:
 	@bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
 	@bash ./.utils/message.sh link "WP Frontend:    https://${APP_BASEURL}/"
-	@bash ./.utils/message.sh link "WP Backend:     https://${APP_BASEURL}/editor/wp-admin/"
+	@bash ./.utils/message.sh link "WP Backend:     https://${APP_BASEURL}/wp-admin/"
 	@bash ./.utils/message.sh link "Adminer:        https://${APP_BASEURL}/adminer/"
-	@bash ./.utils/message.sh link "NextJS dev:     https://${APP_BASEURL}/dev/
+	@bash ./.utils/message.sh link "NextJS dev:     https://${APP_BASEURL}/dev/"
 	@echo ""
 
 .PHONY: toolbox
