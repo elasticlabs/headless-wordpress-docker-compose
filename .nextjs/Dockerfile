@@ -1,10 +1,8 @@
-FROM node:lts-buster-slim
+FROM node:lts-buster
 
 WORKDIR /usr/src/app
 
 # Add scripts & dir
-ADD entrypoint.sh /scripts/
-RUN chmod +x /scripts/*.sh
+COPY .gitignore .
 
-ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 CMD ["npm", "run", "dev"]
