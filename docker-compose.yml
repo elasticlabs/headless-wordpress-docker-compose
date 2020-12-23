@@ -70,7 +70,8 @@ services:
       context: ./.nextjs
     container_name: ${COMPOSE_PROJECT_NAME}_nextjs
     restart: unless-stopped
-    depends_on: wordpress
+    depends_on: 
+      - wordpress
     expose: 
       - "3000"
     volumes: 
