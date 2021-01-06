@@ -5,11 +5,18 @@
 SHELL         = /bin/bash
 .SHELLFLAGS   = -o pipefail -c
 
+#
 # For cleanup, get Compose project name from .env file
 APP_PROJECT?=$(shell cat .env | grep COMPOSE_PROJECT_NAME | sed 's/.*=//')
 APP_BASEURL?=$(shell cat .env | grep VIRTUAL_HOST | sed 's/.*=//')
 SOFTWARE_STACK = proxy wordpress mariadb adminer
 WP_STACK = wordpress mariadb healthcheck toolbox
+#
+# Frontend Git repository specific variables
+GIT_USER=$(shell cat .env | grep GIT_USER | sed 's/.*=//')
+GIT_PASSWORD=$(shell cat .env | grep GIT_PASSWORD | sed 's/.*=//')
+GIT_REPO=$(shell cat .env | grep GIT_REPO | sed 's/.*=//')
+REPO_DIR=$(shell basename ${GIT_REPO}  | sed 's/\.git//')
 
 # Every command is a PHONY, to avoid file naming confliction.
 .PHONY: help
@@ -19,10 +26,14 @@ help:
 	@echo "       https://github.com/elasticlabs/headless-wordpress-docker-compose "
 	@echo " "
 	@echo " "
-	@echo " Basic usage :"
+	@echo " Backend commands :"
 	@echo "   make build           # Makes container & volumes cleanup, and builds the stack"
 	@echo "   make up  (stop)      # With working proxy, brings up (or stop) the stack"
 	@echo "   make update          # Update the whole stack"
+	@echo " "
+	@echo " Frontent commands :"
+	@echo "   make build-front     # Build dev NextJS frontend container"
+	@echo "   make up-front        # Starts the Frontend application (whole stack, if not done yet)"
 	@echo " "
 	@echo " Management utils :"
 	@echo "   make toolbox         # Temporary run the WP CLI container for maintenance purpose"
@@ -33,9 +44,9 @@ help:
 	@echo "======================================================================================"
 
 .PHONY: up
-up: build
+up: build build-front
 	@bash ./.utils/message.sh info "[INFO] Starting the project..."
-	docker-compose up -d --remove-orphans ${SOFTWARE_STACK} nextjs
+	docker-compose up -d --remove-orphans ${SOFTWARE_STACK}
 	@bash ./.utils/message.sh info "[INFO] Waiting for resources to become ready for configuration..."
 	docker-compose run --rm healthcheck
 	docker-compose run --rm toolbox configure
@@ -53,8 +64,22 @@ build:
 	# Build the stack
 	@bash ./.utils/message.sh info "[INFO] Building the application"
 	docker-compose build --pull ${WP_STACK}
-	# 2/ NextJS
+
+.PHONY: build-front
+build-front:
+	# Grab repo dir name and setup appropriate variable into .env file before build
+	@bash ./.utils/message.sh info "[INFO] Setting up frontend container..."
+	grep -q NEXTJS_DATA .env || echo "NEXTJS_DATA=./${REPO_DIR}" >> .env
 	docker-compose build --pull nextjs
+	# Build the Next JS site
+	@bash ./.utils/message.sh info "[INFO] Building up NextJS demo / dev site..."
+	git clone ${GIT_REPO} && chmod -R o+w ${REPO_DIR}
+	grep -q ${REPO_DIR} .gitignore || echo ${REPO_DIR} >> .gitignore
+	cd ${REPO_DIR} && docker-compose run --rm nextjs install
+
+.PHONY: up-front
+up-front: up
+	@bash ./.utils/message.sh info "[INFO] Starting the Next JS dev site..."
 
 .PHONY: update
 update: 
@@ -68,10 +93,9 @@ update:
 .PHONY: urls
 urls:
 	@bash ./.utils/message.sh headline "[INFO] You may now access your project at the following URLs:"
-	@bash ./.utils/message.sh link "WP Frontend:    https://${APP_BASEURL}/"
-	@bash ./.utils/message.sh link "WP Backend:     https://${APP_BASEURL}/wp-admin/"
-	@bash ./.utils/message.sh link "Adminer:        https://${APP_BASEURL}/adminer/"
-	@bash ./.utils/message.sh link "NextJS dev:     https://${APP_BASEURL}/dev/"
+	@bash ./.utils/message.sh link "next JS devsite: https://${APP_BASEURL}/"
+	@bash ./.utils/message.sh link "WP Backend:      https://${APP_BASEURL}/wp-admin/"
+	@bash ./.utils/message.sh link "Adminer:         https://${APP_BASEURL}/adminer/"
 	@echo ""
 
 .PHONY: toolbox
@@ -107,7 +131,10 @@ hard-cleanup:
 	# Delete all hosted persistent data available in local directorys
 	@bash ./.utils/message.sh info "[INFO] Remove all stored logs and data in local volumes!"
 	rm -rf app/*
-
+	# Cleanup .env file and move it to .env-changeme for initial checkup
+	grep -v NEXTJS_DATA .env > .env-cleanup && rm .env
+	@bash ./.utils/message.sh warning "[NOTICE] .env file moved to .env-cleanup -> Review & move it to .env when ready."
+	
 .PHONY: wait
 wait: 
 	sleep 2

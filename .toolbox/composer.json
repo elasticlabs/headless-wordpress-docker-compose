@@ -8,7 +8,8 @@
     "require":{
        "wpackagist-plugin/wp-graphql":"*",
        "wpackagist-plugin/advanced-custom-fields":"*",
-       "wpackagist-plugin/akismet":"*"
+       "wpackagist-plugin/akismet":"*",
+       "custom-post-type-ui":"*"
     },
     "config":{
        "secure-http":false

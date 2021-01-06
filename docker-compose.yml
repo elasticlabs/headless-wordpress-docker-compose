@@ -75,7 +75,7 @@ services:
     expose: 
       - "3000"
     volumes: 
-      - ${NEXTJS_DATA:-./nextjs-material-kit}:/usr/src/app
+      - ${NEXTJS_DATA}:/usr/src/app
     networks: 
       - wordpress
 
